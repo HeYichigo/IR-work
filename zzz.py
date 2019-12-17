@@ -5,6 +5,8 @@ from sklearn import svm, ensemble
 from sklearn import naive_bayes as bayes
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+from sklearn.externals import joblib
+import os
 import numpy as np
 
 
@@ -44,11 +46,11 @@ def get_label_list(label_file_name):
 
 def writinfile(ffile=501, cfile=1, path="../Data/"):
     if cfile <= 9:
-        return path + ffile + "/00" + cfile
+        return path + str(ffile) + "/00" + str(cfile)
     if cfile > 9 and cfile <= 99:
-        return path + ffile + "/0" + cfile
-    if cfile == 100:
-        return path + ffile + "/" + cfile
+        return path + str(ffile) + "/0" + str(cfile)
+    if cfile >= 100:
+        return path + str(ffile) + "/" + str(cfile)
 
 
 if __name__ == "__main__":
@@ -74,34 +76,51 @@ if __name__ == "__main__":
     # 划分训练集和测试集
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    # clf = bayes.BernoulliNB(alpha=1, binarize=True)
-    clf = svm.LinearSVC()
+    # clf = bayes.BernoulliNB()
+    # clf = svm.LinearSVC()
     # clf = LogisticRegression()
-    # clf = ensemble.RandomForestClassifier()
+    clf = ensemble.RandomForestClassifier()
     clf.fit(x_train, y_train)
+    # clf.fit(x, y)
+    """
+    保存模型
+    """
+    # dirs = "model"
+    # joblib.dump(clf, dirs+'/clf.pkl')
+
     """
     下面是预测步骤
     """
 
     x_out_test, vectoring = get_data_tf_idf("test_email.txt")
+    # index = np.arange(x_out_test.shape[0])
+    # np.random.shuffle(index)
+    # x_out_test = x_out_test[index]
+    # y = np.array(y)[index]
 
-    y_pred = clf.predict(x_out_test)
+    # content = open("test_email.txt", 'r', encoding='utf8').readlines()
+    # x_out_test = vectoring.fit_transform(content)
+    y_pred = clf.predict(x_test)
 
     # 输出到文件
     ffile = 501
     cfile = 1
-    result_list = []
+    result_list = [["TYPE", "ID"]]
     result = []
-    for line in y_pred:
+    for line in y_pred[0:10000]:
         if line == 1:
             result = ["ham", writinfile(ffile, cfile)]
         elif line == 0:
             result = ["spam", writinfile(ffile, cfile)]
-        resultList.append(result)
-        ffile = ffile + 1
+        result_list.append(result)
         cfile = cfile + 1
+        if cfile == 101:
+            ffile = ffile + 1
+            cfile = 1
     f = open("pred.txt", 'w', encoding='utf8')
-    f.write('\n'.join(result_list))
+
+    temp = [' '.join(x if x else ' ') for x in result_list]
+    f.write('\n'.join(temp))
     f.close()
     ####
     print('classification_report\n',
