@@ -42,6 +42,15 @@ def get_label_list(label_file_name):
     return dataset
 
 
+def writinfile(ffile=501, cfile=1, path="../Data/"):
+    if cfile <= 9:
+        return path + ffile + "/00" + cfile
+    if cfile > 9 and cfile <= 99:
+        return path + ffile + "/0" + cfile
+    if cfile == 100:
+        return path + ffile + "/" + cfile
+
+
 if __name__ == "__main__":
     np.random.seed(1)
     email_file_name = 'all_email.txt'
@@ -70,14 +79,29 @@ if __name__ == "__main__":
     # clf = LogisticRegression()
     # clf = ensemble.RandomForestClassifier()
     clf.fit(x_train, y_train)
-    y_pred = clf.predict(x_test)
+    """
+    下面是预测步骤
+    """
+
+    x_out_test, vectoring = get_data_tf_idf("test_email.txt")
+
+    y_pred = clf.predict(x_out_test)
+
     # 输出到文件
-    f = open("pred.txt", 'w', encoding='utf8')
+    ffile = 501
+    cfile = 1
+    result_list = []
     result = []
     for line in y_pred:
         if line == 1:
-            result[line] = []
-    f.write(str(y_pred))
+            result = ["ham", writinfile(ffile, cfile)]
+        elif line == 0:
+            result = ["spam", writinfile(ffile, cfile)]
+        resultList.append(result)
+        ffile = ffile + 1
+        cfile = cfile + 1
+    f = open("pred.txt", 'w', encoding='utf8')
+    f.write('\n'.join(result_list))
     f.close()
     ####
     print('classification_report\n',

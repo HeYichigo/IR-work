@@ -35,5 +35,5 @@ def get_data_in_a_file(original_path, save_path='all_email.txt'):
 
 
 print('Storing emails in a file ...')
-get_data_in_a_file('垃圾邮件分类任务语料\\train\\Data', save_path='all_email.txt')
+get_data_in_a_file('垃圾邮件分类任务语料\\test\\Data', save_path='test_email.txt')
 print('Store emails finished !')
