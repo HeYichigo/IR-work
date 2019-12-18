@@ -2,3 +2,5 @@
 .vscode/
 垃圾邮件分类任务语料/
 *.rar
+all_email.txt
+label.txt
