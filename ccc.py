@@ -18,4 +18,10 @@ DF_all_email = pd.DataFrame(all_email_txt)
 DF_full_email_label = pd.concat([DF_label_txt, DF_all_email], axis=1)
 # DF_full_email_label = pd.DataFrame.from_dict(DF_label_txt, orient='index')
 DF_full_email_label.columns = ['type', 'text']
-DF_full_email_label.to_csv("full_email_label.csv")
+DF_full_email_label.to_csv("full_email_label.csv",index=False)
+
+emailframe = pd.read_csv("full_email_label.csv")
+
+emailframe = emailframe.dropna(subset=['text'])
+
+emailframe.to_csv("filter_none_full_email_label.csv", index=False)
