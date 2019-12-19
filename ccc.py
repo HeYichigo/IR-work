@@ -1,27 +1,21 @@
-# -*- coding: UTF-8 -*-
+import codecs
 import pandas as pd
-import numpy as np
+import os
+import jieba
 
-label_txt = np.loadtxt("label.txt", dtype=int)
-DF_label_txt = pd.DataFrame(label_txt)
+stopwords = codecs.open('stopwords.txt', 'r', 'UTF8').read().split('\r\n')
+emailframe = pd.read_csv("result.csv")
+# cut words and process text
+processed_texts = []
+for text in emailframe["TEXT"]:
+    words = []
+    seg_list = jieba.cut(text)
+    for seg in seg_list:
+        if (seg.isalpha()) & (seg not in stopwords):
+            words.append(seg)
+    sentence = " ".join(words)
+    processed_texts.append(sentence)
 
-f = open('all_email.txt', 'r', encoding='utf-8')
-sourceInLine = f.readlines()
-all_email_txt = []
-for line in sourceInLine:
-    temp1 = line.strip('\n')
-    # temp2 = temp1.split('\n')
-    all_email_txt.append(temp1)
+emailframe["TEXT"] = processed_texts
 
-DF_all_email = pd.DataFrame(all_email_txt)
-
-DF_full_email_label = pd.concat([DF_label_txt, DF_all_email], axis=1)
-# DF_full_email_label = pd.DataFrame.from_dict(DF_label_txt, orient='index')
-DF_full_email_label.columns = ['type', 'text']
-DF_full_email_label.to_csv("full_email_label.csv",index=False)
-
-emailframe = pd.read_csv("full_email_label.csv")
-
-emailframe = emailframe.dropna(subset=['text'])
-
-emailframe.to_csv("filter_none_full_email_label.csv", index=False)
+emailframe.to_csv("jieba_train.csv")

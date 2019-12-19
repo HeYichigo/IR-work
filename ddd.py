@@ -1,32 +1,48 @@
-import pandas as pd
 import codecs
-emailframe = pd.read_csv("full_email_label.csv")
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn import naive_bayes as bayes
+# transform text to sparse matrix
 
-# DF_full_email_label = DF_full_email_label.dropna(subset=['text'])
 
-emailframe = emailframe.dropna(subset=['text'])
+def transformTextToSparseMatrix(texts):
+    vectorizer = CountVectorizer(binary=False)
+    vectorizer.fit(texts)
 
-emailframe.to_csv("filter_full_email_label.csv")
-emailframe.head(3)
+    # inspect vocabulary
+    vocabulary = vectorizer.vocabulary_
+    print("There are ", len(vocabulary), " word features")
 
-print("data shape:", emailframe.shape)
-# 0 = spams 1 = ham
-print("spams in rows:", emailframe.loc[emailframe['type'] == 0].shape[0])
-print("ham in rows:", emailframe.loc[emailframe['type'] == 1].shape[0])
+    vector = vectorizer.transform(texts)
 
-stopwords = codecs.open('stopwords.txt', 'r', 'UTF8').read().split('\r\n')
+    result = pd.DataFrame(vector)
+    result.to_csv("vector.csv")
 
-# cut words and process text
-processed_texts = []
-for text in emailframe["text"]:
-    print(text)
-    words = []
-    seg_list = text.split(" ")
-    for seg in seg_list:
-        if (seg.isalpha()) & (seg not in stopwords):
-            words.append(seg)
-    sentence = " ".join(words)
-    processed_texts.append(sentence)
-emailframe["text"] = processed_texts
+    keys = []
+    values = []
+    for key, value in vectorizer.vocabulary_.items():
+        keys.append(key)
+        values.append(value)
+    df = pd.DataFrame(data={"key": keys, "value": values})
+    df.to_csv("vocabulary.csv")
+    colnames = df.sort_values("value")["key"].values
+    result.columns = colnames
+    return result
 
-emailframe.to_csv("filter_full_email_label.csv")
+
+emailframe = pd.read_csv("jieba_train.csv")
+textmatrix = transformTextToSparseMatrix(emailframe["TEXT"])
+
+features = pd.DataFrame(textmatrix.apply(sum, axis=0))
+extractedfeatures = [features.index[i]
+                     for i in range(features.shape[0]) if features.iloc[i, 0] > 5]
+textmatrix = textmatrix[extractedfeatures]
+print("There are ", textmatrix.shape[1], " word features")
+
+train, test, trainlabel, testlabel = train_test_split(
+    textmatrix, emailframe["TYPE"], test_size=0.2)
+# train model
+clf = bayes.BernoulliNB(alpha=1, binarize=True)
+model = clf.fit(train, trainlabel)
+# model score
+model.score(test, testlabel)
