@@ -3,6 +3,7 @@ import pandas as pd
 
 from sklearn.externals import joblib
 
+csv = pd.read_csv("train_vector.csv")
 texts1 = "We 如果 我 是 一只 鸟"
 texts2 = "We 如果 我 不是 你 的 话"
 texts3 = "We 如果 入锅 哈哈哈"
@@ -33,6 +34,6 @@ print("++++++++++++++")
 vector1 = vectorizer.transform(train_set)
 vector2 = vectorizer.transform([texts3])
 
-print(vector1.toarray())
+print(vector1.tobsr())
 print("+++++++++++++++")
 print(vector2.toarray())

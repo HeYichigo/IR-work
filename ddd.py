@@ -23,25 +23,25 @@ def transformTextToSparseMatrix(texts):
     """
 
     vector = vectorizer.transform(texts)
-    shape = vector.get_shape()[0]
-    for col_num in range(0, shape):
-        col = vector.getrow(col_num)
-        # temp.append(col.toarray()[0])
-        result = pd.DataFrame(col.toarray()[0])
-        result.to_csv("train_vector.csv", mode="a", header=False, index=False)
+    # shape = vector.get_shape()[0]
+    # for col_num in range(0, shape):
+    #     col = vector.getrow(col_num)
+    #     # temp.append(col.toarray()[0])
+    #     result = pd.DataFrame(col.toarray()[0])
+    #     result.to_csv("train_vector.csv", mode="a", header=False, index=False)
 
-    # result = pd.DataFrame(temp)
-    # result.to_csv("train_vector.csv")
+    result = pd.DataFrame(vector)
+    result.to_csv("train_vector.csv")
 
-    keys = []
-    values = []
-    for key, value in vectorizer.vocabulary_.items():
-        keys.append(key)
-        values.append(value)
-    df = pd.DataFrame(data={"key": keys, "value": values})
-    df.to_csv("vocabulary.csv")
-    colnames = df.sort_values("value")["key"].values
-    result.columns = colnames
+    # keys = []
+    # values = []
+    # for key, value in vectorizer.vocabulary_.items():
+    #     keys.append(key)
+    #     values.append(value)
+    # df = pd.DataFrame(data={"key": keys, "value": values})
+    # df.to_csv("vocabulary.csv")
+    # colnames = df.sort_values("value")["key"].values
+    # result.columns = colnames
     return result
 
 
