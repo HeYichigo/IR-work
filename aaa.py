@@ -48,8 +48,8 @@ def get_data_in_a_file(original_path, save_path='all_email.txt'):
 
 time_start = time.time()
 print('Storing emails in a file ...')
-get_data_in_a_file('垃圾邮件分类任务语料\\train\\Data',
-                   save_path='train_email.csv')
+get_data_in_a_file('垃圾邮件分类任务语料\\test\\Data',
+                   save_path='test_email.csv')
 print('Store emails finished !')
 time_end = time.time()
 print('totally cost', time_end-time_start)

@@ -8,8 +8,8 @@ import time
 start_time = time.time()
 """
 """
-train = pd.read_csv("ID_train.csv")
-label = pd.read_csv("ID_label.csv")
+train = pd.read_csv("train_email.csv")
+label = pd.read_csv("re_index.csv")
 
 result = pd.concat([label, train], axis=1, join='inner')
 
@@ -18,3 +18,4 @@ result.to_csv("result.csv", index=False)
 """
 """
 stop_time = time.time()
+print('totally cost', stop_time-start_time)
